@@ -41,14 +41,21 @@ class Cover(models.Model):
 
 
 class Book(models.Model):
+    BOOK_TYPES = [
+        ('manual', 'Учебник'),
+        ('fiction', 'Художественная литература'),
+    ]
+
     objects = None
     title = models.CharField(max_length=100, verbose_name='Название книги', blank=False, unique=False)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, max_length=100, verbose_name='Автор', blank=False)
     yearOfRel = models.IntegerField(verbose_name='Год выпуска', blank=False,
                                     validators=[MinValueValidator(1000), MaxValueValidator(9999)])
     genre = models.CharField(max_length=100, verbose_name='Жанр', blank=True)
+    type = models.CharField(max_length=10, choices=BOOK_TYPES, default='Учебник', verbose_name='Тип книги')
     category = models.CharField(max_length=100, verbose_name='Категория', blank=True)
     publisher = models.CharField(max_length=100, verbose_name='Издательство', blank=True)
+    is_translation = models.BooleanField(default=False, verbose_name='Переведенная книга')
 
     def validate_image(value):
         size_limit = 2 * 1024 * 1024
@@ -60,6 +67,6 @@ class Book(models.Model):
     bookFile = models.FileField(upload_to='books', verbose_name='Файл с книгой', blank=False, null=True)
 
     class Meta:
-        unique_together = ('title', 'author', 'yearOfRel', 'publisher')
+        unique_together = ('title', 'author', 'yearOfRel', 'publisher', 'type')
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
