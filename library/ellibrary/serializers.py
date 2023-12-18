@@ -13,18 +13,15 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
         is_translated = data.get('is_translated', False)
 
         if book_type == 'fiction' and is_translated == False:
-            # Для художественных произведений, которые не переведены, ничего не делаем
             pass
-        elif book_type == 'textbook':
-            # Для учебников проверяем некоторые поля
+        elif book_type == 'manual':
             title = data.get('title', None)
             author = data.get('author', None)
             publisher = data.get('publisher', None)
             year_of_release = data.get('yearOfRel', None)
 
-            # Проверяем, чтобы эти 4 поля не повторялись с другими учебниками
             existing_textbooks = Book.objects.filter(
-                type='textbook',
+                type='manual',
                 title=title,
                 author=author,
                 publisher=publisher,
